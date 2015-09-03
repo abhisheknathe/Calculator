@@ -15,7 +15,7 @@ Model A calculator which takes in add subtract multiply divide sqr sqrt neg and 
         - Open terminal
         - Install ant by running the Methods
 > brew update
->
+
 > brew install ant
 
     - #####if homebrew is not installed
