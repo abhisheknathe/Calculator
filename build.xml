@@ -1,5 +1,11 @@
 <?xml version = "1.0"?>
-<project name="geometry" default="runjUnit" basedir=".">
+<project name="geometry" default="reportgen" xmlns:jacoco="antlib:org.jacoco.ant">
+
+
+<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+<classpath path="./lib/jacocoant.jar"/>
+</taskdef>
+
 <target name="build" depends="clean">
 <mkdir dir="out"/>
 <javac destdir="out">
@@ -12,16 +18,37 @@
 <delete dir="out"/>
 </target>
 
+
 <target name="runjUnit" depends="build" description="runs the junit test cases">
-<junit printsummary="yes" haltonfailure="true"  showoutput="true">
+<jacoco:coverage destfile="./cover/jacoco.exec">
+<junit printsummary="yes" fork="true" haltonfailure="true" includeAntRuntime="true" showoutput="true">
   <classpath>
     <pathelement location="lib/junit-4.12.jar"/>
     <pathelement location="lib/hamcrest-all-1.1.jar"/>
     <pathelement location="out"/>
   </classpath>
-    <test name="com.thoughtworks.calculator.CalculatorTest" todir="."/>
-    <test name="com.thoughtworks.calculator.ParserTest" todir="."/>
-    <test name="com.thoughtworks.calculator.CommandTest" todir="."/>
+  <batchtest fork="yes">
+    <fileset dir="test">
+      <include name="**/*Test*.java"/>
+    </fileset>
+  </batchtest>
 </junit>
+</jacoco:coverage>
+</target>
+
+<target name="reportgen" depends="runjUnit">
+<jacoco:report>
+  <executiondata>
+    <file file="./cover/jacoco.exec"/>
+  </executiondata>
+  <structure name="Example">
+    <classfiles>  
+      <fileset dir="./out/com/thoughtworks/calculator/"/>
+    </classfiles>
+  </structure>
+  <html destdir="./reports/reports.html"/>
+  <csv destfile="./reports/report.csv" />
+  <xml destfile="./reports/report.xml" />
+</jacoco:report>
 </target>
 </project>
